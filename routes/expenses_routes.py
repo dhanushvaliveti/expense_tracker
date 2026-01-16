@@ -59,9 +59,10 @@ def Delete_expense(expense_id):
     return "",204
     
     
-@expenses_bp.route("/users/<int:user_id>/total-expenses", methods=["GET"])
+@expenses_bp.route("/total-expenses", methods=["GET"])
 @auth_required
-def total_expenses(user_id):
+def total_expenses():
+    user_id = request.user_id
     from models import Expense, Category
 
     expenses = (

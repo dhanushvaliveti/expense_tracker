@@ -5,9 +5,10 @@ from middlewares.auth import auth_required
 
 """ categories routes post and get"""
 category_bp=Blueprint("categories",__name__)
-@category_bp.route("/users/<int:user_id>/categories",methods=["POST"])
+@category_bp.route("/categories",methods=["POST"])
 @auth_required
-def Create_category(user_id):
+def Create_category():
+    user_id = request.user_id
     data=request.get_json()
     if data is None or "food" not in data:
         return jsonify({"error":"name is not given"}),400
@@ -18,9 +19,10 @@ def Create_category(user_id):
     db.session.add(categories)
     db.session.commit()
     return jsonify({"id":categories.id,"food":categories.food,"user_id":categories.user_id}),201
-@category_bp.route("/users/<int:user_id>/categories")
+@category_bp.route("/categories")
 @auth_required
-def Show_category(user_id):
+def Show_category():
+    user_id = request.user_id
     user=User.query.get(user_id)
     if user is None:
         return jsonify({"error": "user not found"}), 404
