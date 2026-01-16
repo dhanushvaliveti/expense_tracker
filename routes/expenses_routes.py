@@ -22,9 +22,14 @@ def Create_expense(category_id):
 @expenses_bp.route("/categories/<int:category_id>/expenses")
 @auth_required
 def show_expense(category_id):
-    category = Category.query.get(category_id)
-    if category is None:
-        return jsonify({"error": "category not found"}), 404
+    user_id = request.user_id  # from token
+
+    # Make sure this category actually belongs to THIS user
+    category = Category.query.filter_by(id=category_id, user_id=user_id).first()
+    if not category:
+        return jsonify({"error": "Category not found for this user"}), 404
+
+    expenses = Expense.query.filter_by(category_id=category_id).all()
     res=[]
     for i in category.expenses:
         res.append({"id":i.id,"amount":i.amount,"desc":i.desc,"date":i.date,"category_id":i.category_id})
